@@ -18,6 +18,7 @@ function previewImage()
     {
         //Foto elegida
         var foto = fupFoto.files[0];
+        nombreArchivo = foto.name;
 
         //FileReader Leer la foto
         var file = new FileReader();
@@ -159,7 +160,7 @@ function AbrirModal(id)
             .then(res => res.json())
             .then(res =>
             {
-                document.getElementById("txtIdDoctor").value = res.IdDoctor;
+                //document.getElementById("txtIdDoctor").value = res.IdDoctor;
                 document.getElementById("txtNombre").value = res.Nombre;
                 document.getElementById("txtApPaterno").value = res.ApPaterno;
                 document.getElementById("txtApMaterno").value = res.ApMaterno;
@@ -180,6 +181,8 @@ function AbrirModal(id)
 
                 document.getElementById("txtSueldo").value = res.Sueldo;
                 document.getElementById("txtFechaContrato").value = res.FechaContrato.substr(0, 10);
+                document.getElementById("imgFoto").src = res.Archivo;
+                nombreArchivo = res.nombre;
             })
     }
 }
@@ -199,6 +202,81 @@ function Eliminar(id)
                 }
                 else {
                     alert("Ocurrio un error");
+                }
+            })
+    }
+}
+
+
+
+var nombreArchivo;
+function Guardar()
+{
+    if (confirm("Desea guardar?") == 1) {
+
+        var idDoc = document.getElementById("txtIdDoctor").value;
+
+        if (idDoc == "") {
+            idDoc = 0;
+        }
+
+        var nombre = document.getElementById("txtNombre").value;
+        var ApPaterno = document.getElementById("txtApPaterno").value;
+        var ApMaterno = document.getElementById("txtApMaterno").value;
+        var clinica = document.getElementById("cboClinica").value;
+        var especialidad = document.getElementById("cboEspecialidad").value;
+        var email = document.getElementById("txtEmail").value;
+        var celular = document.getElementById("txtTelefonoCelular").value;
+        var sueldo =document.getElementById("txtSueldo").value;
+        var fechaContrato = document.getElementById("txtFechaContrato").value;
+        var foto = document.getElementById("imgFoto").src;
+
+        var cboSexo;
+        if (document.getElementById("rbSexoMasculino").checked == 1)
+        {
+            cboSexo = 1;
+        }
+        else
+        {
+            cboSexo = 2;
+        }
+
+        //if (foto != null) {
+        //    nombreArchivo = document.getElementById("fupFoto").files[0].name;
+        //}
+
+        fetch("http://192.168.100.221:8081/Api/Doctor", {
+            headers: {
+                'Content-Type':'application/json'
+            },
+            method: 'POST',
+            body: JSON.stringify({
+
+                "IIDDOCTOR": idDoc,
+                "NOMBRE": nombre,
+                "APPATERNO": ApPaterno,
+                "APMATERNO": ApMaterno,
+                "IIDCLINICA": clinica,
+                "IIDESPECIALIDAD": especialidad,
+                "EMAIL": email,
+                "TELEFONOCELULAR": celular,
+                "IIDSEXO": cboSexo,
+                "SUELDO": sueldo,
+                "FECHACONTRATO": fechaContrato,
+                "NOMBREARCHIVO": nombreArchivo,
+                "ARCHIVO": foto,
+                "BHABILITADO": 1
+            })
+        }).then(res => res.json())
+            .then(res =>
+            {
+                if (res == 1) {
+                    alert("Se ejecuto correctamente!");
+                    listarDoctor();
+                    document.getElementById("btnClose").click();
+                }
+                else {
+                    alert("Ocurrio un error!");
                 }
             })
     }
