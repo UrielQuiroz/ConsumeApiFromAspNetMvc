@@ -5,6 +5,8 @@ window.onload = function ()
 {
     listarDoctor();
     previewImage();
+    listarClinica();
+    listarEspecialidad();
 }
 
 
@@ -28,6 +30,48 @@ function previewImage()
     }
 }
 
+
+function listarClinica()
+{
+    fetch("http://192.168.100.221:8081/Api/Clinica")
+        .then(res => res.json())
+        .then(res => {
+            llenarComboClinica(res);
+        })
+}
+
+
+function llenarComboClinica(res)
+{
+    var contenido = "<option value=''>---SELECCIONE---</option>";
+
+    for (var i = 0; i < res.length; i++) {
+        contenido += "<option value='" + res[i].IdClinica + "'>" + res[i].Nombre +"</option>";
+    }
+
+    document.getElementById("cboClinica").innerHTML = contenido;
+}
+
+
+
+function listarEspecialidad() {
+    fetch("http://192.168.100.221:8081/Api/Especialidad")
+        .then(res => res.json())
+        .then(res => {
+            lenarComboEspecialidad(res);
+        })
+}
+
+function lenarComboEspecialidad(res)
+{
+    var contenido = "<option value=''>---SELECCIONE---</option>";
+
+    for (var i = 0; i < res.length; i++) {
+        contenido += "<option value='" + res[i].IdEspecialidad + "'>" + res[i].Nombre + "</option>";
+    }
+
+    document.getElementById("cboEspecialidad").innerHTML = contenido;
+}
 
 
 function listarDoctor()
@@ -72,7 +116,7 @@ function crearListado(res) {
 
                     contenido += "<td>";
                         contenido += "<button onclick='AbrirModal(" + res[i].IdDoctor +")' class='btn btn-primary' data-toggle='modal' data-target='#exampleModal'>Editar</button>";
-                        contenido += "<button class='btn btn-danger ml-2' data-toggle='modal' data-target='#exampleModal'>Eliminar</button>";
+                        contenido += "<button onclick='Eliminar(" + res[i].IdDoctor +")' class='btn btn-danger ml-2'>Eliminar</button>";
                     contenido += "</td>";
 
                     contenido += "</tr>";
@@ -111,5 +155,51 @@ function AbrirModal(id)
     else
     {
         document.getElementById("lblTitulo").innerHTML = "Editar Doctor";
+        fetch("http://192.168.100.221:8081/Api/Doctor/?idDoctor=" + id)
+            .then(res => res.json())
+            .then(res =>
+            {
+                document.getElementById("txtIdDoctor").value = res.IdDoctor;
+                document.getElementById("txtNombre").value = res.Nombre;
+                document.getElementById("txtApPaterno").value = res.ApPaterno;
+                document.getElementById("txtApMaterno").value = res.ApMaterno;
+                document.getElementById("cboClinica").value = res.IdClinica;
+                document.getElementById("cboEspecialidad").value = res.IdEspecialidad;
+                document.getElementById("txtEmail").value = res.Email;
+                document.getElementById("txtTelefonoCelular").value = res.celular;
+
+                //RadioButton
+                var rbSexoMasculino = document.getElementById("rbSexoMasculino");
+                var rbSexoFemenino = document.getElementById("rbSexoFemenino");
+
+                if (res.Sexo == 1) {
+                    rbSexoMasculino.checked = true;
+                } else {
+                    rbSexoFemenino.checked = true;
+                }
+
+                document.getElementById("txtSueldo").value = res.Sueldo;
+                document.getElementById("txtFechaContrato").value = res.FechaContrato.substr(0, 10);
+            })
+    }
+}
+
+
+function Eliminar(id)
+{
+    if (confirm("Desea eliminar realmente?") == 1) {
+        fetch("http://192.168.100.221:8081/Api/Doctor?idDoctor=" + id, {
+            method: "PUT"
+        }).then(res => res.json())
+            .then(res =>
+            {
+                if (res ==1) {
+                    alert("Se elimino correctamente");
+                    listarDoctor();
+                }
+                else {
+                    alert("Ocurrio un error");
+                }
+            })
     }
 }
