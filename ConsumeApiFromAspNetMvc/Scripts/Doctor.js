@@ -142,6 +142,8 @@ function Limpiar()
         limpiar[i].value = "";
     }
 
+    document.getElementById("imgFoto").src = "/img/NoImage.png"
+
 }
 
 
@@ -160,7 +162,7 @@ function AbrirModal(id)
             .then(res => res.json())
             .then(res =>
             {
-                //document.getElementById("txtIdDoctor").value = res.IdDoctor;
+                document.getElementById("txtIdDoctor").value = res.IdDoctor;
                 document.getElementById("txtNombre").value = res.Nombre;
                 document.getElementById("txtApPaterno").value = res.ApPaterno;
                 document.getElementById("txtApMaterno").value = res.ApMaterno;
@@ -181,11 +183,17 @@ function AbrirModal(id)
 
                 document.getElementById("txtSueldo").value = res.Sueldo;
                 document.getElementById("txtFechaContrato").value = res.FechaContrato.substr(0, 10);
+
+                if (res.Archivo.includes("http://localhost:15745/")) {
+                    res.Archivo = res.Archivo.replace("http://localhost:15745/~", "");
+
+                }
+
                 document.getElementById("imgFoto").src = res.Archivo;
                 nombreArchivo = res.nombre;
             })
     }
-}
+} 
 
 
 function Eliminar(id)
@@ -214,12 +222,14 @@ function Guardar()
 {
     if (confirm("Desea guardar?") == 1) {
 
-        var idDoc = document.getElementById("txtIdDoctor").value;
-
-        if (idDoc == "") {
-            idDoc = 0;
+        var objeto = camposObligatorios();
+        if (objeto.exito == false) {
+            var contenido = objeto.contenido;
+            document.getElementById("divError").innerHTML = contenido;
+            return;
         }
-
+        document.getElementById("divError").innerHTML = "";
+        var idDoc = document.getElementById("txtIdDoctor").value;
         var nombre = document.getElementById("txtNombre").value;
         var ApPaterno = document.getElementById("txtApPaterno").value;
         var ApMaterno = document.getElementById("txtApMaterno").value;
@@ -280,4 +290,23 @@ function Guardar()
                 }
             })
     }
+}
+
+
+
+function camposObligatorios() {
+    var obligatorio = document.getElementsByClassName("obligatorio");
+    var exito = true;
+    var contenido = "<ol style='color:red'>";
+
+    for (var i = 0; i < obligatorio.length; i++) {
+        if (obligatorio[i].value == "") {
+            exito = false;
+            contenido += "<li>" + obligatorio[i].name + " es obligatorio </li>";
+        }
+    }
+
+    contenido += "</ol>";
+    return { exito, contenido };
+
 }

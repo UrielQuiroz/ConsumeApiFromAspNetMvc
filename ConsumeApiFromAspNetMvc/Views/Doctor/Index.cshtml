@@ -37,32 +37,32 @@
 
                 <div class="form-group">
                     <label>ID Doctor</label>
-                    <input type="text" class="form-control limpiar" id="txtIdDoctor" readonly />
+                    <input type="text" class="form-control limpiar" id="txtIdDoctor" disabled />
                 </div>
 
                 <div class="form-group">
                     <label>Nombre</label>
-                    <input type="text" class="form-control limpiar" id="txtNombre" />
+                    <input name="Nombre Doctor" type="text" class="form-control limpiar obligatorio" id="txtNombre" />
                 </div>
 
                 <div class="form-group">
                     <label>Apelido Paterno</label>
-                    <input type="text" class="form-control limpiar" id="txtApPaterno" />
+                    <input name="Apellido Paterno" type="text" class="form-control limpiar obligatorio" id="txtApPaterno" />
                 </div>
 
                 <div class="form-group">
                     <label>Apelido Materno</label>
-                    <input type="text" class="form-control limpiar" id="txtApMaterno" />
+                    <input name="Apellido Materno" type="text" class="form-control limpiar obligatorio" id="txtApMaterno" />
                 </div>
 
                 <div class="form-group">
                     <label>Clinica</label>
-                    <select id="cboClinica" class="form-control limpiar"></select>
+                    <select name="Clinica" id="cboClinica" class="form-control limpiar obligatorio"></select>
                 </div>
 
                 <div class="form-group">
                     <label>Especialidad</label>
-                    <select id="cboEspecialidad" class="form-control limpiar"></select>
+                    <select name="Especialidad" id="cboEspecialidad" class="form-control limpiar obligatorio"></select>
                 </div>
 
                 <div class="form-group">
@@ -107,6 +107,7 @@
                 <button id="btnClose" type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
                 <button type="button" class="btn btn-primary" onclick="Guardar()">Guardar</button>
             </div>
+            <div id="divError"></div>
         </div>
     </div>
 </div>
